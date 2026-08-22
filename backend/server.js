@@ -8,7 +8,7 @@ const aiController = require('./src/controllers/aiController');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Tell Express to trust the Render load balancer (CRUCIAL FIX)
+
 app.set('trust proxy', 1);
 
 app.use(helmet()); 
