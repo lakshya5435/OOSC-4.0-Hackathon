@@ -6,10 +6,11 @@ export default function Login() {
   const navigate = useNavigate();
   const [isRegistering, setIsRegistering] = useState(false);
   
+  // CHANGED: username is now email
   const [formData, setFormData] = useState({
-    username: '',
+    email: '', 
     password: '',
-    role: 'student' // default role
+    role: 'student' 
   });
   
   const [error, setError] = useState('');
@@ -29,15 +30,12 @@ export default function Login() {
       const response = await apiClient.post(endpoint, formData);
 
       if (isRegistering) {
-        // Auto-switch to login or auto-login upon successful registration
         setIsRegistering(false);
         setError('Account created successfully! Please sign in.');
       } else {
-        // Save auth data
         localStorage.setItem('token', response.data.token);
         localStorage.setItem('role', response.data.role || 'student');
         
-        // Navigate to appropriate dashboard
         if (response.data.role === 'admin' || response.data.role === 'counselor') {
           navigate('/admin');
         } else {
@@ -45,9 +43,10 @@ export default function Login() {
         }
       }
     } catch (err) {
+      // Improved error handling to show backend message if available
       setError(
-        err.response?.data?.message || 
-        (isRegistering ? 'Registration failed. Try a different username.' : 'Invalid credentials.')
+        err.response?.data?.error || 
+        (isRegistering ? 'Registration failed. Try a different email.' : 'Invalid credentials.')
       );
     } finally {
       setLoading(false);
@@ -58,7 +57,6 @@ export default function Login() {
     <div className="min-h-screen bg-[#F7F0E6] flex items-center justify-center p-4">
       <div className="max-w-md w-full bg-white rounded-[2rem] p-8 shadow-xl border-t-8 border-[#819E8E]">
         
-        {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-3xl font-extrabold text-[#4A5D53]">
             {isRegistering ? 'Create an Account' : 'Welcome Back'}
@@ -70,27 +68,26 @@ export default function Login() {
           </p>
         </div>
 
-        {/* Status / Error Message */}
         {error && (
-          <div className="mb-4 p-3 rounded-xl text-sm font-medium text-center bg-[#FFF0F0] text-red-600 border border-red-200">
+          <div className={`mb-4 p-3 rounded-xl text-sm font-medium text-center ${error.includes('successfully') ? 'bg-green-100 text-green-700 border-green-200' : 'bg-[#FFF0F0] text-red-600 border-red-200'} border`}>
             {error}
           </div>
         )}
 
-        {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
+            {/* CHANGED: Label and Input for Email */}
             <label className="block text-xs font-bold text-[#4A5D53] uppercase mb-1">
-              Username / ID
+              Email Address
             </label>
             <input
-              type="text"
-              name="username"
+              type="email"
+              name="email"
               required
-              value={formData.username}
+              value={formData.email}
               onChange={handleChange}
               className="w-full p-3 rounded-xl border border-[#B7C7BC] bg-white text-[#4A5D53] focus:ring-2 focus:ring-[#819E8E] focus:outline-none"
-              placeholder="e.g., student123"
+              placeholder="e.g., student@school.com"
             />
           </div>
 
@@ -135,7 +132,6 @@ export default function Login() {
           </button>
         </form>
 
-        {/* Toggle Switch */}
         <div className="mt-6 text-center">
           <p className="text-sm text-[#819E8E]">
             {isRegistering ? 'Already have an account?' : "Don't have an account?"}{' '}
