@@ -4,10 +4,12 @@ const helmet = require('helmet');
 const cors = require('cors');
 const rateLimit = require('express-rate-limit');
 const aiController = require('./src/controllers/aiController');
+
 const app = express();
-app.set('trust proxy', 1);
 const PORT = process.env.PORT || 5000;
 
+
+app.set('trust proxy', 1);
 
 app.use(helmet()); 
 app.use(cors({ origin: '*' }));
@@ -21,13 +23,11 @@ const apiLimiter = rateLimit({
 });
 app.use('/api/', apiLimiter);
 
-
 app.get('/health', (req, res) => {
   res.status(200).json({ status: 'active', timestamp: new Date() });
 });
 
-
- app.use('/api/auth', require('./src/routes/authRoutes'));
+app.use('/api/auth', require('./src/routes/authRoutes'));
 app.use('/api/assessments', require('./src/routes/assessmentRoutes'));
 
 app.use((err, req, res, next) => {
