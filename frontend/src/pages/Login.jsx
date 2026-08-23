@@ -43,7 +43,7 @@ export default function Login() {
         }
       }
     } catch (err) {
-      // Improved error handling to show backend message if available
+      
       setError(
         err.response?.data?.error || 
         (isRegistering ? 'Registration failed. Try a different email.' : 'Invalid credentials.')
